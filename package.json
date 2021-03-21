@@ -1,8 +1,4 @@
 {
-  "private": true,
-  "name": "nuxt-hn",
-  "description": "Nuxt Hacker News",
-  "version": "1.0.0",
   "author": "Evan You <yyx990803@gmail.com>",
   "contributors": [
     {
@@ -13,37 +9,42 @@
     },
     {
       "name": "Pooya Parsa (@pi0)"
+    },
+    {
+      "name": "Jonas Galvez (@anothergalvez)"
     }
   ],
   "scripts": {
-    "dev": "nuxt dev",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "dev-spa": "nuxt dev --spa",
-    "build-spa": "nuxt build --spa",
-    "start-spa": "nuxt start --spa",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "lintfix": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
+    "dev": "node server/main",
+    "lint": "eslint . --ext js,vue --fix",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build --ssrManifest --outDir dist/client",
+    "build:server": "vite build --ssr entry/server.js --outDir dist/server",
+    "serve": "cross-env NODE_ENV=production node server/main",
+    "debug": "node --inspect-brk server"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.13.1",
-    "h3": "^0.2.5",
-    "nuxt": "^2.15.2",
-    "ohmyfetch": "^0.1.8"
+    "@vueuse/head": "^0.5.1",
+    "vue": "^3.0.6",
+    "vue-router": "^4.0.3"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config": "^5.0.0",
-    "@nuxtjs/pwa": "3.3.5",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.20.0",
+    "@vitejs/plugin-vue": "^1.0.0",
+    "@vitejs/plugin-vue-jsx": "^1.1.2",
+    "@vue/compiler-sfc": "^3.0.7",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.22.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.1.5",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
-    "eslint-plugin-standard": "^5.0.0",
-    "eslint-plugin-vue": "^7.6.0",
+    "eslint-plugin-vue": "^7.7.0",
+    "fastify": "^3.13.0",
+    "fastify-api": "^0.1.0",
+    "fastify-vite": "^2.0.0-beta.10",
+    "got": "^11.8.2",
+    "nodemon": "^2.0.7",
     "stylus": "^0.54.8",
-    "stylus-loader": "^4.3.3"
+    "vite": "^2.0.5"
   }
 }
