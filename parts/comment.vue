@@ -1,23 +1,38 @@
 <template>
-  <li v-if="comment && comment.user" class="comment">
+  <li
+    v-if="comment && comment.user"
+    class="comment">
     <div class="by">
       <router-link :to="'/user/' + comment.user">
         {{ comment.user }}
       </router-link>
-      {{ comment.time | timeAgo }} ago
+      {{ timeAgo(comment.time) }} ago
     </div>
-    <div class="text" v-html="comment.content" />
-    <div v-if="comment.comments && comment.comments.length" :class="{ open }" class="toggle">
-      <a @click="open = !open">{{ open ? '[-]' : '[+] ' + pluralize(comment.comments.length) + ' collapsed' }}
-      </a>
+    <div
+      class="text"
+      v-html="comment.content" />
+    <div
+      v-if="comment.comments && comment.comments.length"
+      :class="{ open }"
+      class="toggle">
+      <a @click="open = !open">{{
+        open ? '[-]' : '[+] ' + pluralize(comment.comments.length) + ' collapsed'
+      }}</a>
     </div>
-    <ul v-show="open" class="comment-children">
-      <comment v-for="childComment in comment.comments" :key="childComment.id" :comment="childComment" />
+    <ul
+      v-show="open"
+      class="comment-children">
+      <Comment
+        v-for="childComment in comment.comments"
+        :key="childComment.id"
+        :comment="childComment" />
     </ul>
   </li>
 </template>
 
 <script>
+import { timeAgo } from '../logic/filters'
+
 export default {
   name: 'Comment',
   props: {
@@ -32,6 +47,7 @@ export default {
     }
   },
   methods: {
+    timeAgo,
     pluralize: n => n + (n === 1 ? ' reply' : ' replies')
   }
 }

@@ -3,8 +3,12 @@
     <span class="score">{{ item.points }}</span>
     <span class="title">
       <template v-if="isAbsolute(item.url)">
-        <a :href="item.url" target="_blank" rel="noopener">{{ item.title }}</a>
-        <span class="host"> ({{ item.url | host }})</span>
+        <a
+          :href="item.url"
+          target="_blank"
+          rel="noopener"
+        >{{ item.title }}</a>
+        <span class="host"> ({{ host(item.url) }})</span>
       </template>
       <template v-else>
         <router-link :to="'/item/' + item.id">{{ item.title }}</router-link>
@@ -12,14 +16,18 @@
     </span>
     <br>
     <span class="meta">
-      <span v-if="item.type !== 'job'" class="by">
+      <span
+        v-if="item.type !== 'job'"
+        class="by">
         by
         <router-link :to="'/user/' + item.user">{{ item.user }}</router-link>
       </span>
       <span class="time">
-        {{ item.time | timeAgo }} ago
+        {{ timeAgo(item.time) }} ago
       </span>
-      <span v-if="item.type !== 'job'" class="comments-link">
+      <span
+        v-if="item.type !== 'job'"
+        class="comments-link">
         |
         <router-link :to="'/item/' + item.id">{{ item.comments_count }} comments</router-link>
       </span>
@@ -28,8 +36,9 @@
 </template>
 
 <script>
+import { host, timeAgo } from '../logic/filters'
+
 export default {
-  name: 'NewsItem',
   props: {
     item: {
       type: Object,
@@ -37,6 +46,8 @@ export default {
     }
   },
   methods: {
+    host,
+    timeAgo,
     isAbsolute (url) {
       return /^https?:\/\//.test(url)
     }
