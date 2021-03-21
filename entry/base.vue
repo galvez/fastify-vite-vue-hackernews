@@ -1,47 +1,79 @@
 <template>
   <div id="app">
     <header class="header">
-      <nav class="inner" role="navigation">
-        <router-link to="/" exact>
-          <img class="logo" src="~/assets/logo.svg" alt="logo">
+      <nav
+        class="inner"
+        role="navigation"
+      >
+        <router-link
+          to="/"
+          exact
+        >
+          <img
+            class="logo"
+            src="../assets/logo-fastify.svg"
+            alt="logo"
+          >
+          <img
+            class="logo"
+            src="../assets/logo-vite.svg"
+            alt="logo"
+          >
         </router-link>
-        <router-link v-for="(list, key) in feeds" :key="key" :to="`/${key}`">
-          {{ list.title }}
+        <router-link
+          v-for="feed in $global.feeds"
+          :key="feed"
+          :to="`/${feed}`"
+        >
+          {{ capitalize(feed) }}
         </router-link>
-        <a class="github" href="https://github.com/nuxt/hackernews" target="_blank" rel="noopener banner">
-          Built with Nuxt.js
+        <a
+          class="github"
+          href="https://github.com/galvez/fastify-vite-vue-hackernews"
+          target="_blank"
+          rel="noopener banner"
+        >
+          Built with Fastify and Vite
         </a>
       </nav>
     </header>
-    <nuxt nuxt-child-key="none" role="main" />
+    <router-view v-slot="{ Component }">
+      <Suspense>
+        <component :is="Component" />
+      </Suspense>
+    </router-view>
   </div>
 </template>
 
 <script>
-import { feeds } from '~/common/api'
+import { useHead } from '@vueuse/head'
+import { useRoute } from 'vue-router'
 
 export default {
-  head () {
-    const host = process.server
-      ? this.$ssrContext.req.headers.host
+  setup () {
+    const route = useRoute()
+    const host = import.meta.env.SSR
+      // eslint-disable-next-line no-undef
+      ? useSSRContext().req.headers.host
       : window.location.host
-
-    return {
+    useHead({
       link: [
-        // We use $route.path since we don't use query parameters
-        { rel: 'canonical', href: `https://${host}${this.$route.path}` }
+        // We use route.path since we don't use query parameters
+        { rel: 'canonical', href: `https://${host}${route.path}` }
       ]
-    }
+    })
   },
-  computed: {
-    feeds: () => feeds
+  methods: {
+    capitalize (str) {
+      return `${str.charAt(0).toUpperCase()}${str.slice(1)}`
+    }
   }
 }
 </script>
 
 <style lang="stylus">
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Fira Sans', sans-serif;
   font-size: 15px;
   background-color: lighten(#eceef1, 30%);
   margin: 0;
