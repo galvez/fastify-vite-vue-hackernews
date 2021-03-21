@@ -2,64 +2,55 @@
   <div class="item-view view">
     <div class="item-view-header">
       <template v-if="isAbsolute(item.url)">
-        <a :href="item.url" target="_blank" rel="noopener"><h1 v-text="item.title" /></a>
-        <span class="host"> ({{ item.url | host }})</span>
+        <a
+          :href="item.url"
+          target="_blank"
+          rel="noopener"><h1>{{ item.title }}</h1></a>
+        <span class="host"> ({{ host(item.url) }})</span>
       </template>
       <template v-else>
-        <h1 v-text="item.title" />
+        <h1>{{ item.title }}</h1>
       </template>
       <p class="meta">
         {{ item.points }} points | by
         <router-link :to="'/user/' + item.user">
           {{ item.user }}
         </router-link>
-        {{ item.time | timeAgo }} ago
+        {{ timeAgo(item.time) }} ago
       </p>
     </div>
     <div class="item-view-comments">
-      <lazy-wrapper :loading="item.loading">
-        <p class="item-view-comments-header">
-          {{ item.comments ? item.comments.length + ' comments' : 'No comments yet.' }}
-        </p>
-        <ul class="comment-children">
-          <comment v-for="comment in item.comments" :key="comment.id" :comment="comment" />
-        </ul>
-      </lazy-wrapper>
+      <p class="item-view-comments-header">
+        {{ item.comments ? item.comments.length + ' comments' : 'No comments yet.' }}
+      </p>
+      <ul class="comment-children">
+        <comment
+          v-for="comment in item.comments"
+          :key="comment.id"
+          :comment="comment" />
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
-import Comment from '~/components/Comment'
-import LazyWrapper from '~/components/LazyWrapper'
+import { defineAsyncComponent } from 'vue'
+import { useFeedItem } from '../logic/hooks'
+import { host, timeAgo } from '../logic/filters'
 
 export default {
-  name: 'ItemView',
-  components: { Comment, LazyWrapper },
-
-  fetch () {
-    const { id } = this.$route.params
-    return this.$store.dispatch('FETCH_ITEM', { id })
+  components: {
+    Comment: defineAsyncComponent(() => import('../parts/comment.vue'))
   },
-
-  computed: {
-    id () {
-      return this.$route.params.id
-    },
-    item () {
-      return this.$store.state.items[this.id]
-    }
+  async setup () {
+    const { item } = await useFeedItem()
+    return { item }
   },
-
   methods: {
+    host,
+    timeAgo,
     isAbsolute (url) {
       return /^https?:\/\//.test(url)
-    }
-  },
-
-  head () {
-    return {
-      title: this.item.title
     }
   }
 }
