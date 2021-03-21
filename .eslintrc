@@ -1,0 +1,8 @@
+{
+  extends: ['standard', 'plugin:vue/vue3-recommended'],
+  rules: {
+    'vue/no-v-html': 'off',
+    'vue/html-closing-bracket-newline': 'off',
+    'vue/max-attributes-per-line': 'off',
+  }
+}
